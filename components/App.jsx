@@ -9,10 +9,25 @@ class App extends Component {
         };
     }
 
-    componentWillMount() {
-        let {weather} = this.state;
-        weather.location = "Philadelphia, PA";
-        this.setState({weather});
+    componentDidMount() {
+        fetch('http://localhost:3000/api/v1/weather/19134', {
+                method: 'get',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                let {weather} = this.state;
+                weather.location = responseJson.location.city + ", " + responseJson.location.state;
+                weather.observation = responseJson.weather.observation;
+                weather.temperature = responseJson.weather.temperature;
+                weather.iconUrl = responseJson.weather.iconUrl;
+                this.setState({weather});
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     render() {
